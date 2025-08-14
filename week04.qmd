@@ -1,0 +1,864 @@
+---
+title: "STAT1379/COMP6179: ST4DS"
+subtitle: "Week 4 SGTA: Student template"
+author: "Your Name Here"
+execute:
+  echo: true
+  eval: true
+format: html
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(tidyverse)
+library(babynames)
+```
+
+
+
+# Pre-SGTA Work  
+
+## Working with Data in R  
+
+### Understanding Data Types and Structures  
+
+Load the `tidyverse` library and explore different R data types by running the code below. For each block, **predict the output before running it** and observe what `typeof()`, `class()`, and `str()` tell you.
+
+#### Atomic Vectors - Doubles  
+
+```{r atomic-vectors-doubles, eval=FALSE}
+library(tidyverse)
+x <- c(1, 2, 3, 4, 5, 6)
+x
+typeof(x)
+class(x)
+str(x)
+
+x <- 1:6
+x
+typeof(x)
+class(x)
+str(x)
+
+x <- seq(1, 6, len = 6)
+x
+typeof(x)
+class(x)
+str(x)
+```
+
+**Your observations:**
+
+- What differences do you notice between these three ways of creating vectors?
+- Why might `typeof()` give different results?
+
+*Write your thoughts here:*
+
+
+
+#### Atomic Vectors - Integers  
+
+```{r atomic-vectors-integers, eval=FALSE}
+x <- c(1L, 2L, 3L, 4L, 5L, 6L)
+x
+typeof(x)
+class(x)
+str(x)
+
+x <- c(1, 2, 3, 4, 5L, 6L)
+x
+typeof(x)
+class(x)
+str(x)
+
+x <- as.integer(x)
+x
+typeof(x)
+class(x)
+str(x)
+```
+
+**Your observations:**
+
+- What happens when you mix integers and doubles in a vector?
+- What does the `L` suffix do?
+
+*Write your thoughts here:*
+
+
+
+#### Atomic Vectors - Characters  
+
+```{r atomic-vectors-characters, eval=FALSE}
+x <- "This"
+x
+typeof(x)
+class(x)
+str(x)
+
+x <- c("This", "unit", "is", "great.", "Do", "you", "agree?")
+x
+typeof(x)
+class(x)
+str(x)
+
+x <- paste("This", "unit", "is", "great.", "Do", "you", "agree?", sep = "::")
+x
+typeof(x)
+class(x)
+str(x)
+
+x <- paste("This", "unit", "is", "great.", "Do", "you", "agree?", sep = " ")
+x
+typeof(x)
+class(x)
+str(x)
+
+cat("This", "unit", "is", "great.", "Do", "you", "agree?", sep = "\t")
+cat("This", "unit", "is", "great.", "Do", "you", "agree?", sep = "\n")
+cat("This", "unit", "is", "great.", "\n", "Do", "you", "agree?")
+cat("This ", "unit ", "is ", "great.", "\n", "Do ", "you ", "agree? ", sep = "")
+
+glue::glue("This unit is great. Do you agree?")
+glue::glue("This unit is great.
+           Do you agree?")
+```
+
+**Your task:**
+
+- Compare the different methods for combining strings
+- What's the difference between `paste()`, `cat()`, and `glue()`?
+
+*Write your analysis here:*
+
+
+
+#### Atomic Vectors - Logicals  
+
+```{r atomic-vectors-logicals, eval=FALSE, error=TRUE}
+1 > 0
+1 < 0
+1 <- 1  # This will cause an error - why?
+1 == 1
+
+x <- c(TRUE, TRUE, FALSE)
+x
+typeof(x)
+class(x)
+str(x)
+
+x <- c(T, T, F)
+x
+typeof(x)
+class(x)
+str(x)
+
+x <- 1 > 0
+x
+typeof(x)
+class(x)
+str(x)
+
+x <- c(1 > 0, 5 > 0, 5 > 10)
+x
+typeof(x)
+class(x)
+str(x)
+```
+
+**Your task:**
+
+- Explain why `1 <- 1` causes an error
+- What's the difference between `=` and `==`?
+
+*Write your explanation here:*
+
+
+
+#### Factors  
+
+```{r factors, eval=FALSE}
+x <- c("spring", "spring", "winter", "spring", "winter", "spring", "spring")
+x
+typeof(x)
+class(x)
+str(x)
+attributes(x)
+
+x <- factor(c("spring", "spring", "winter", "spring", "winter", "spring", "spring"))
+x
+typeof(x)
+class(x)
+str(x)
+attributes(x)
+table(x)
+as.character(x)
+```
+
+**Your analysis:**
+
+- How are factors different from character vectors?
+
+*Write your thoughts here:*
+
+
+
+### Working with Matrices and Arrays  
+
+#### Matrices  
+
+```{r matrices, eval=FALSE}
+m <- matrix(1:6, nrow = 2)
+str(m)
+class(m)
+m
+
+m <- matrix(1:6, nrow = 2, byrow = TRUE)
+str(m)
+class(m)
+m
+```
+
+**Your task:**
+
+- Explain the difference between the two matrix creations above
+- How does R fill matrices by default?
+
+*Write your answer here:*
+
+
+
+#### Arrays  
+
+```{r arrays, eval=FALSE}
+x <- array(c(1:5, 11:15), dim = c(5, 5))
+str(x)
+class(x)
+x
+# R recycles values: we gave 10 values, but needed 25 (5*5)
+
+x <- array(c(1:15, 21:30), dim = c(5, 5))
+str(x)
+class(x)
+x
+
+x <- array(c(1:15, 21:30, 101:125), dim = c(5, 5, 2))
+str(x)
+class(x)
+x
+
+x <- array(c(1:25, 101:125), dim = c(5, 5, 2))
+str(x)
+class(x)
+x
+```
+
+**Your task:**
+
+- What happens when you don't provide enough values for an array?
+- How do 3-dimensional arrays work?
+
+*Write your explanation here:*
+
+
+
+### Working with Lists  
+
+```{r lists, eval=FALSE}
+x <- list(1:5, 11:15, c("a", "b", "c"))
+str(x)
+class(x)
+x
+
+x <- list(x1 = 1:5, x2 = 11:15, x3 = c("a", "b", "c"))
+str(x)
+class(x)
+x
+
+x <- list(x1 = 1:5, x2 = 11:15, x3 = list(y1 = "a", y2 = "b", y3 = "c"))
+str(x)
+class(x)
+x
+```
+
+**Your task:**
+
+- How are lists different from vectors?
+- What are the advantages of named lists?
+
+*Write your analysis here:*
+
+
+
+### Working with Data Frames and Tibbles  
+
+```{r data-frames, eval=FALSE}
+# Traditional data frame
+x <- data.frame(
+  season = c("winter", "winter", "spring", "spring"),
+  month = c("Jan", "Feb", "Apr", "Apr"), 
+  station = c("Sydney", "Newcastle", "Sydney", "Melbourne"), 
+  temperature = c(14, 17, 26, 25)
+)
+str(x)
+typeof(x)
+class(x)
+x
+
+# Modern tibble
+x <- tibble(
+  season = c("winter", "winter", "spring", "spring"),
+  month = c("Jan", "Feb", "Apr", "Apr"), 
+  station = c("Sydney", "Newcastle", "Sydney", "Melbourne"), 
+  temperature = c(14, 17, 26, 25)
+)
+str(x)
+typeof(x)
+class(x)
+x
+
+# Tribble (transposed tibble for readability)
+x <- tribble(
+  ~season, ~month, ~station, ~temperature,
+  "winter", "Jan", "Sydney", 14,
+  "winter", "Feb", "Newcastle", 17,
+  "spring", "Apr", "Sydney", 26,
+  "spring", "Apr", "Newcastle", 25
+)
+glimpse(x)
+typeof(x)
+class(x)
+x
+```
+
+**Your analysis:**
+
+- What are the differences between data frames and tibbles?
+- When would you use `tribble()` instead of `tibble()`?
+
+*Write your thoughts here:*
+
+
+
+## Loading and Saving Data  
+
+Download the `test.csv` file from iLearn and place it in a `data` subfolder within your working directory. We'll then load the file using `read_csv()` and explore the available options.
+
+### Reading Data  
+
+```{r loading-data, eval=FALSE}
+# Load CSV file
+here::here("data", "test.csv") # Check the path first
+x <- read_csv(file = here::here("data", "test.csv"))
+str(x)
+glimpse(x)
+typeof(x)
+class(x)
+x
+
+# Alternative using read_delim
+x_delim <- read_delim(file = here::here("data", "test.csv"),
+                      delim = ",")
+waldo::compare(x, x_delim)
+```
+
+**Your task:**
+
+- What information does `glimpse()` provide that `str()` doesn't?
+- Are there any differences between `read_csv()` and `read_delim()` results?
+
+*Write your observations here:*
+
+
+
+### Writing Data  
+
+```{r writing-data, eval=FALSE}
+# Create sample data
+weather_data <- tribble(
+  ~season, ~month, ~station, ~temperature,
+  "winter", "Jan", "Sydney", 14,
+  "winter", "Feb", "Newcastle", 17,
+  "spring", "Apr", "Sydney", 26,
+  "spring", "Apr", "Newcastle", 25
+)
+str(weather_data)
+weather_data
+
+# Save to CSV file
+write_csv(weather_data, 
+          file = here::here("data", "my_weather_data.csv"))
+
+# Verify by reading back
+weather_check <- read_csv(here::here("data", "my_weather_data.csv"))
+waldo::compare(weather_data, weather_check)
+```
+
+**Your task:**
+
+- After running this code, check your `data` folder - what file was created?
+- Why is it good practice to read the data back after saving?
+
+*Write your thoughts here:*
+
+
+
+### Selecting and Modifying Values  
+
+#### Working with Vectors  
+
+```{r vector-indexing, eval=FALSE}
+# Vector indexing
+seasons <- c("spring", "spring", "winter", "spring", "winter", "spring", "spring")
+seasons[2]                    # Select second element
+seasons[c(2, 3, 5)]          # Select multiple elements
+seasons[2] <- "summer"       # Modify second element
+seasons
+seasons[-2]                  # Exclude second element
+seasons[c(T, T, F, F, F, T, T)]  # Logical indexing
+```
+
+
+#### Working with Matrices  
+
+```{r matrix-indexing, eval=FALSE}
+# Matrix indexing
+m <- matrix(1:9, nrow = 3)
+m
+m[2, 3]                      # Row 2, column 3
+m[2, c(1, 3)]               # Row 2, columns 1 and 3
+m[2, 3] <- 99               # Assign new value
+m
+
+m[1:2, 1]                   # Rows 1-2, column 1
+m[, 1]                      # All rows, column 1
+m[, 1, drop = FALSE]        # Keep as matrix (don't drop dimension)
+
+m[-2, ]                     # Exclude row 2
+m[-2, -c(2, 3)]            # Exclude row 2, columns 2-3
+m[c(T, F, T), ]            # Logical indexing for rows
+```
+
+#### Working with Data Frames and Tibbles  
+
+```{r dataframe-indexing, eval=FALSE}
+# Data frame indexing
+weather <- tribble(
+  ~season, ~month, ~station, ~temperature,
+  "winter", "Jan", "Sydney", 14,
+  "winter", "Feb", "Newcastle", 17,
+  "spring", "Apr", "Sydney", 26,
+  "spring", "Apr", "Newcastle", 25
+)
+
+weather[2, 3]               # Row 2, column 3
+weather[2, c(1, 3)]         # Row 2, columns 1 and 3  
+weather[3, 3] <- "Melbourne"  # Modify value
+weather
+
+weather[1:4, 1]             # Rows 1-4, column 1
+weather[, 1]                # All rows, column 1 (returns tibble)
+weather |> pull(1)          # Extract first column as vector
+weather |> pull(season)     # Extract by name as vector
+
+weather[-2, ]               # Exclude row 2
+weather[-2, -c(2, 3)]      # Exclude row 2 and columns 2-3
+weather[c(T, F, T, T), ]   # Logical indexing
+
+weather$temperature         # Access column by name
+weather$temperature[2]      # Second element of temperature
+weather$temperature[2] <- 16  # Modify temperature value
+weather
+```
+
+
+#### Working with Lists  
+
+```{r list-indexing, eval=FALSE}
+# List indexing
+data_list <- list(1:5, 11:15, c("a", "b", "c"))
+data_list
+data_list[[1]]              # First element (as vector)
+data_list[[2]]              # Second element
+data_list[[3]][2]           # Second element of third component
+data_list[[3]][c(2, 3)]     # Multiple elements
+
+# Named lists
+named_list <- list(x1 = 1:5, x2 = 11:15, x3 = c("a", "b", "c"))
+named_list
+named_list[[1]]             # By position
+named_list$x2               # By name
+named_list$x3[2]           # Element within component
+named_list$x3[c(2, 3)]     # Multiple elements
+
+# Nested lists
+nested_list <- list(x1 = 1:5, x2 = 11:15, x3 = list(y1 = "a", y2 = "b", y3 = "c"))
+nested_list
+nested_list$x3$y2          # Access nested element
+nested_list$x3$y2 <- "house"  # Modify nested element
+nested_list
+```
+
+
+### Dealing with Missing Values  
+
+#### Understanding NA  
+
+```{r missing-values, eval=FALSE}
+# Working with NA
+1 + NA                      # What happens with missing data?
+x <- NA
+x
+str(x)
+is.na(x)                    # Test for missing values
+NA == NA                    # Why doesn't this work?
+is.na(NA) == is.na(NA)     # Proper way to compare
+
+# More examples
+values <- c(1, 2, NA, 4, 5)
+is.na(values)               # Which are missing?
+sum(values)                 # What happens?
+sum(values, na.rm = TRUE)   # Remove missing values
+mean(values, na.rm = TRUE)  # Same for mean
+```
+
+
+# Data Wrangling with dplyr  
+
+## Introduction to dplyr  
+
+Load the `babynames` dataset and explore the main dplyr verbs. Each verb performs a specific data manipulation task.
+
+### Basic dplyr Operations  
+
+```{r dplyr-basics, eval=FALSE}
+library(babynames)
+library(tidyverse)
+
+# Explore the data first
+glimpse(babynames)
+head(babynames)
+
+# select() - Choose columns
+select(babynames, name)
+select(babynames, name, sex)
+select(babynames, name:n)           # Range of columns
+select(babynames, starts_with("n"))  # Columns starting with "n"
+select(babynames, -prop)            # Exclude prop column
+select(babynames, -c(year, sex, prop))  # Exclude multiple
+
+# filter() - Choose rows
+filter(babynames, name == "Khaleesi")
+filter(babynames, name == "Sea" | name == "Anemone")
+filter(babynames, prop > 0.08)
+filter(babynames, year == 1880, (n == 5 | n == 6))
+filter(babynames, name %in% c("Acura", "Lexus", "Yugo"))
+
+# arrange() - Sort rows
+arrange(babynames, n)
+arrange(babynames, n, prop)
+arrange(babynames, year, desc(prop))
+arrange(babynames, desc(year), desc(prop))
+```
+
+
+## Using the Pipe `|>` Operator  
+
+### Chaining Operations  
+
+```{r pipe-operations, eval=FALSE}
+# Traditional nested approach (hard to read)
+arrange(select(filter(babynames, year == 2017, sex == "M"), name, n), desc(n))
+
+# Using pipes (much clearer!)
+babynames |>
+  filter(year == 2017, sex == "M") |>
+  select(name, n) |>
+  arrange(desc(n))
+
+# Try different combinations
+babynames |>
+  filter(name == "Emma") |>
+  arrange(year) |>
+  select(year, n, prop)
+
+babynames |>
+  filter(year >= 2010) |>
+  select(name, year, n) |>
+  arrange(desc(n)) |>
+  head(10)
+```
+
+
+
+## Summarising Data  
+
+### Using `summarise()` and `group_by()`  
+
+```{r summarising-data, eval=FALSE}
+# Basic summaries
+babynames |>
+  filter(name == "Thomas", sex == "M") |>
+  summarise(
+    total = sum(n), 
+    max = max(n), 
+    mean = mean(n),
+    years = n_distinct(year)
+  )
+
+# When did Khaleesi first appear?
+babynames |>
+  filter(name == "Khaleesi") |>
+  summarise(first_year = first(year))
+
+# Overall dataset summary
+babynames |>
+  summarise(
+    total_names = n(),
+    distinct_names = n_distinct(name),
+    years_covered = n_distinct(year)
+  )
+
+# Group summaries
+babynames |>
+  group_by(year, sex) |>
+  summarise(total_births = sum(n), .groups = "drop") |>
+  arrange(year)
+
+babynames |>
+  group_by(name, sex) |>
+  summarise(total = sum(n), .groups = "drop") |>
+  arrange(desc(total)) |>
+  head(10)
+```
+
+## Creating New Variables  
+
+### Using mutate()  
+
+```{r mutate-examples, eval=FALSE}
+# Add new columns
+babynames |>
+  mutate(births = n / prop) |>
+  select(year, name, n, prop, births) |>
+  head()
+
+# Complex calculations
+babynames |>
+  group_by(year) |>
+  mutate(year_total = sum(n)) |>
+  ungroup() |>
+  mutate(
+    fraction = n / year_total,
+    percentage = fraction * 100
+  ) |>
+  select(year, name, n, year_total, percentage) |>
+  arrange(desc(percentage)) |>
+  head()
+
+# Find peak popularity for each name
+babynames |>
+  group_by(name) |>
+  mutate(
+    peak_n = max(n),
+    is_peak = n == peak_n
+  ) |>
+  filter(is_peak) |>
+  select(name, year, n, prop) |>
+  arrange(desc(n)) |>
+  head()
+```
+
+# Practice Problems  
+
+## Problem 1: Fix the Code  
+
+What's wrong with the following code? Can you fix it?
+
+```{r fix-code, eval=FALSE, error=TRUE}
+# Problem code:
+filter(babynames, name = "Sea")
+filter(babynames, name == Sea)
+```
+
+**Your corrected code:**
+```{r fix-code-student, eval=FALSE}
+# Fixed code here:
+
+
+```
+
+**Your explanation of what was wrong:**
+
+
+
+## Problem 2: Most Popular Names  
+
+Which name was the most popular for a single gender in a single year? Compare arranging by `prop` vs `n`.
+
+```{r popular-names-student, eval=FALSE}
+# Your code to find highest proportion:
+
+
+# Your code to find highest count:
+
+
+```
+
+**Your analysis:**
+- Are the results the same? Why or why not?
+
+
+
+## Problem 3: Popular Girls Names in 2017  
+
+Write a pipeline that will:
+
+1. Filter `babynames` to just girls born in 2017
+2. Select the name and n columns  
+3. Arrange so most popular names are at the top
+
+```{r girls-2017-student, eval=FALSE}
+# Your pipeline here:
+
+
+```
+
+
+# Tidy Data with `tidyr`  
+
+## Understanding Tidy Data  
+
+Explore the concept of tidy data using built-in datasets from `tidyr`. Each dataset represents the same information organised differently.
+
+```{r tidy-data-explore-student, eval=FALSE}
+# Load tidyr (part of tidyverse)
+library(tidyr)
+
+# Look at different representations of the same data
+table1
+table2  
+table3
+table4a  # Cases
+table4b  # Population
+```
+
+**Your analysis:**
+- Which table is "tidy"? Why?
+- What problems do you see with the other tables?
+- How would you describe what each row and column represents in each table?
+
+*Write your analysis here:*
+
+
+
+## Pivoting Data: Lengthening and Widening  
+
+```{r pivoting-student, eval=FALSE}
+# Convert wide to long format
+table4a_long <- table4a |>
+  pivot_longer(
+    cols = c(`1999`, `2000`),    # Columns to pivot
+    names_to = "year",           # Name for the key column
+    values_to = "cases"          # Name for the value column
+  )
+table4a_long
+
+# Convert back to wide format
+table4a_long |>
+  pivot_wider(
+    names_from = year,           # Column to get names from
+    values_from = cases          # Column to get values from
+  )
+
+# Try with table4b (population data)
+table4b_long <- table4b |>
+  pivot_longer(
+    cols = c(`1999`, `2000`),
+    names_to = "year", 
+    values_to = "population"
+  )
+table4b_long
+```
+
+
+## Practice with Real Data  
+
+### Case study: Cholesterol Study  
+
+Convert this dataset to long format and calculate summary statistics for each group.
+
+```{r cholesterol-data-student, eval=FALSE}
+# Create the dataset
+cholesterol_data <- tibble(
+  oat_bran_free = c(4.61, 5.42, 5.40, 4.54, 3.98), 
+  oat_bran = c(3.64, 5.57, 4.85, 4.80, 3.68)
+)
+cholesterol_data
+
+# Your tasks:
+# 1. Convert to long format
+# 2. Calculate n, mean, and standard deviation for each diet group
+```
+
+```{r cholesterol-solution-student, eval=FALSE}
+# Task 1 - Convert to long format:
+
+
+# Task 2 - Calculate summary statistics:
+
+
+```
+
+**Your interpretation:**
+- Which diet appears to result in lower cholesterol?
+- What do the standard deviations tell you?
+
+*Write your analysis here:*
+
+
+
+## Advanced Tidy Data Problems  
+
+Sketch out the process to calculate the `rate` for `table2` and `table3`. You need to:
+
+a. Extract TB cases per country per year
+b. Extract matching population per country per year  
+c. Divide cases by population, multiply by 10000
+d. Store back in appropriate place
+
+**Hint:** For `table3`, you may find the function `separate_wider_delim` helpful.
+
+```{r calculate-rates-student, eval=FALSE}
+# Your approach for table2:
+
+
+# Your approach for table3:
+
+
+```
+
+**Your explanation:**
+- What's the main challenge with each table format?
+- Which approach was easier to implement?
+
+*Write your thoughts here:*
+
+
+
+# Final Reflection  
+
+**What did you learn?**
+- Which concepts were most challenging?
+- Which dplyr functions do you think you'll use most often?
+- How has your understanding of "tidy data" changed?
+
+*Write your reflections here:*
+
+
+
+**Next steps:**
+- What would you like to explore further?
+- How might you apply these skills to your own data?
+
+*Write your thoughts here:*
